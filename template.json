@@ -1,0 +1,54 @@
+{
+  "builders": [
+    {
+      "boot_command": "curl -O http://{{.HTTPIP}}:{{.HTTPPort}}/ignition.ign \u0026\u0026 sudo coreos-installer install /dev/sda --ignition-file ignition.ign \u0026\u0026 poweroff<enter>",
+      "boot_wait": "{{user `boot_wait`}}",
+      "communicator": "none",
+      "cpus": "{{ user `cpus` }}",
+      "disable_shutdown": true,
+      "disk_size": "{{user `disk_size`}}",
+      "guest_additions_mode": "disable",
+      "guest_os_type": "RedHat_64",
+      "hard_drive_interface": "sata",
+      "iso_interface": "sata",
+      "headless": "{{ user `headless` }}",
+      "http_directory": ".",
+      "iso_checksum": "sha256:{{ user `iso_checksum` }}",
+      "iso_url": "{{ user `iso_url` }}",
+      "memory": "{{ user `memory` }}",
+      "type": "virtualbox-iso",
+      "virtualbox_version_file": "",
+      "vm_name": "{{user `vm_name`}}"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "compression_level": 9,
+        "output": "box/{{user `vm_name`}}-{{user `version`}}.box",
+        "type": "vagrant",
+        "vagrantfile_template": "vagrantfile.tpl"
+      },
+      {
+        "access_token": "{{user `access_token`}}",
+        "box_tag": "{{user `box_tag`}}",
+        "type": "vagrant-cloud",
+        "version": "{{user `version`}}"
+      }
+    ]
+  ],
+  "variables": {
+    "access_token": "{{env `VAGRANT_CLOUD_TOKEN`}}",
+    "boot_wait": "30s",
+    "box_tag": "sudo_killself/rhcos-virtualbox",
+    "cpus": "2",
+    "disk_size": "102400",
+    "headless": "false",
+    "iso_checksum": "0e92c3ad698ef68057011f7cc5b9fd07356b8711a55f735aaae22c91b996c96e",
+    "iso_url": "https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.9/latest/rhcos-4.9.0-x86_64-live.x86_64.iso",
+    "memory": "8192",
+    "version": "4.9.0",
+    "vm_name": "rhcos-virtualbox"
+  }
+}
+
